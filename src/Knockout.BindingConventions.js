@@ -178,7 +178,20 @@
                 }
                 bindings.checked = dataFn;
             } else {
-                bindings.value = dataFn;
+                if (unwrapped === bindingContext.$data[name]) {
+                    // If bound to a non-observable in the view model,
+                    // create a writable computed to support writes back to the property
+                    var data = ko.computed({
+                        read: dataFn,
+                        write: function(value) {
+                            bindingContext.$data[name] = value;
+                        },
+                        disposeWhenNodeIsRemoved: element
+                    });
+                    bindings.value = function() { return data; };
+                } else {
+                    bindings.value = dataFn;
+                }
             }
 
             setBinding(bindings, 'enable', "canChange" + getPascalCased(name), bindingContext);

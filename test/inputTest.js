@@ -25,7 +25,7 @@
             });
         });
     }
-    
+
     test("When binding against a input and setting value on viewmodel", function () {
         var model = new InputViewModel();
         ko.test("input", "value", model, function (input) {
@@ -52,4 +52,15 @@
             equal($(input).is(":disabled"), false, "Textbox should be enabled");
         });
     });
+
+    test("When binding against a input with non-observable model value", function () {
+        var model = { value: "first" };
+        ko.test("input", "value", model, function (input) {
+            input.val("second");
+            input.change();
+
+            equal(model.value, "second", "it should reflect the change on model");
+        });
+    });
+
 })(window.ko, window.equal, window.jQuery);
